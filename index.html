@@ -1,144 +1,65 @@
 <!DOCTYPE html>
 <html lang="mr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>१९९५ batchmates स्नेहसंमेलन २०२५</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>१९९५ Batchmates स्नेहसंमेलन २०२५</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: #f9f9f9;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #2c3e50;
-      color: white;
-      text-align: center;
-      padding: 20px;
-      font-size: 22px;
-      font-weight: 600;
-    }
-    .container {
-      width: 95%;
-      max-width: 900px;
-      margin: 20px auto;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
-    }
-    form {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    input, select, button {
-      padding: 10px;
-      font-size: 14px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    input, select {
-      flex: 1;
-      min-width: 120px;
-    }
-    button {
-      background: #2980b9;
-      color: white;
-      cursor: pointer;
-      border: none;
-    }
-    button:hover {
-      background: #1f6391;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: center;
-    }
-    th {
-      background: #34495e;
-      color: white;
-    }
-    .badge {
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-weight: bold;
-      color: white;
-    }
-    .credit {
-      background: #27ae60;
-    }
-    .debit {
-      background: #c0392b;
-    }
-    .amount-credit {
-      color: #27ae60;
-      font-weight: 600;
-    }
-    .amount-debit {
-      color: #c0392b;
-      font-weight: 600;
-    }
-    .download-btn {
-      margin: 15px 0;
-      background: #16a085;
-    }
-    .balance {
-      font-size: 18px;
-      font-weight: bold;
-      margin: 10px 0;
-      color: #2c3e50;
-    }
+    body { font-family: 'Noto Sans Devanagari', sans-serif; background:#f9f9f9; text-align:center; margin:0; padding:0; }
+    header { background:#4CAF50; color:white; padding:10px; }
+    header img { max-height:80px; vertical-align:middle; }
+    header h1 { display:inline-block; margin-left:10px; font-size:22px; vertical-align:middle; }
+    form { margin:20px auto; padding:15px; background:white; max-width:500px; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.2); }
+    form input, form select, form button { margin:5px; padding:10px; width:90%; border:1px solid #ccc; border-radius:4px; }
+    form button { background:#4CAF50; color:white; border:none; cursor:pointer; }
+    table { margin:20px auto; border-collapse:collapse; width:90%; background:white; box-shadow:0 2px 5px rgba(0,0,0,0.2); }
+    th, td { padding:10px; border:1px solid #ddd; }
+    th { background:#f2f2f2; }
+    .balance-box { margin:20px auto; background:#fff; padding:10px; max-width:300px; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.2); font-size:18px; }
+    .download-btn { margin:20px auto; background:#2196F3; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; }
   </style>
 </head>
 <body>
-  <header>१९९५ batchmates स्नेहसंमेलन २०२५</header>
+  <header>
+    <img src="IMG_0143.jpeg" alt="Batchmates Logo">
+    <h1>१९९५ Batchmates स्नेहसंमेलन २०२५</h1>
+  </header>
 
-  <div class="container">
-    <h3>नवीन नोंद जोडा</h3>
-    <form id="entryForm">
-      <input type="date" id="date" required>
-      <input type="text" id="name" placeholder="नाव" required>
-      <select id="type" required>
-        <option value="credit">जमा</option>
-        <option value="debit">खर्च</option>
-      </select>
-      <input type="number" id="amount" placeholder="रक्कम" required>
-      <button type="submit">जतन करा</button>
-    </form>
-
-    <button class="download-btn" onclick="downloadCSV()">CSV डाउनलोड करा</button>
-
-    <div class="balance">शिल्लक रक्कम: <span id="balance">0</span> ₹</div>
-
-    <h3>नोंदी</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>तारीख</th>
-          <th>नाव</th>
-          <th>प्रकार</th>
-          <th>रक्कम</th>
-        </tr>
-      </thead>
-      <tbody id="tableBody"></tbody>
-    </table>
+  <div class="balance-box">
+    शिल्लक रक्कम: <span id="balance">0</span> ₹
   </div>
 
-  <!-- Firebase -->
+  <form id="entryForm">
+    <input type="date" id="date" required>
+    <input type="text" id="name" placeholder="नाव" required>
+    <select id="type" required>
+      <option value="credit">जमा</option>
+      <option value="debit">खर्च</option>
+    </select>
+    <input type="number" id="amount" placeholder="रक्कम" required>
+    <button type="submit">जतन करा</button>
+  </form>
+
+  <button class="download-btn" id="downloadBtn">Download CSV</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>दिनांक</th>
+        <th>नाव</th>
+        <th>प्रकार</th>
+        <th>रक्कम (₹)</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
+  <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
 
-    // ✅ Firebase Config
+    // 🔥 Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyBhrHcBSK1G1EmFW12_eBfA14mHhZd1MdI",
       authDomain: "batch1995-11ec2.firebaseapp.com",
@@ -153,79 +74,71 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const entryForm = document.getElementById("entryForm");
-    const tableBody = document.getElementById("tableBody");
-    const balanceEl = document.getElementById("balance");
-
-    // 🔹 नोंद जतन करा
-    entryForm.addEventListener("submit", async (e) => {
+    // फॉर्म submit → Firestore मध्ये save
+    const form = document.getElementById("entryForm");
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const date = document.getElementById("date").value;
       const name = document.getElementById("name").value;
       const type = document.getElementById("type").value;
       const amount = parseFloat(document.getElementById("amount").value);
 
-      if (!date || !name || !type || !amount) return;
-
+      if (!date || !name || !amount) return;
       try {
         await addDoc(collection(db, "transactions"), { date, name, type, amount });
-        entryForm.reset();
+        form.reset();
       } catch (err) {
-        console.error("Error adding document:", err);
+        console.error("Firestore add error:", err);
       }
     });
 
-    // 🔹 Reload नंतरही Firebase मधील सर्व डेटा दिसेल
-    const q = query(collection(db, "transactions"), orderBy("date", "desc"));
-    onSnapshot(q, (snapshot) => {
+    // Firestore live data listener
+    const tableBody = document.getElementById("tableBody");
+    const balanceEl = document.getElementById("balance");
+    let allData = [];
+
+    onSnapshot(query(collection(db, "transactions"), orderBy("date", "desc")), (snapshot) => {
       tableBody.innerHTML = "";
+      allData = [];
       let balance = 0;
 
       snapshot.forEach((doc) => {
-        const data = doc.data();
-        const typeBadge = data.type === "credit" 
-          ? `<span class="badge credit">जमा</span>` 
-          : `<span class="badge debit">खर्च</span>`;
-        const amountClass = data.type === "credit" ? "amount-credit" : "amount-debit";
-        const sign = data.type === "credit" ? "+" : "-";
+        const d = doc.data();
+        allData.push(d);
+        balance += d.type === "credit" ? d.amount : -d.amount;
 
-        if (data.type === "credit") {
-          balance += data.amount;
-        } else {
-          balance -= data.amount;
-        }
-
-        const row = `<tr>
-          <td>${data.date}</td>
-          <td>${data.name}</td>
-          <td>${typeBadge}</td>
-          <td class="${amountClass}">${sign}${data.amount}</td>
+        const badge = `<span style="padding:4px 8px;color:#fff;background:${d.type==="credit"?"green":"red"};border-radius:4px;">${d.type==="credit"?"जमा":"खर्च"}</span>`;
+        tableBody.innerHTML += `<tr>
+          <td>${d.date}</td>
+          <td>${d.name}</td>
+          <td>${badge}</td>
+          <td>${d.amount}</td>
         </tr>`;
-        tableBody.innerHTML += row;
       });
 
       balanceEl.textContent = balance;
+    }, (err) => {
+      console.error("Snapshot error:", err);
     });
 
-    // 🔹 CSV डाउनलोड
-    function downloadCSV() {
-      let csv = "तारीख,नाव,प्रकार,रक्कम\n";
-      const rows = document.querySelectorAll("table tr");
-      for (let i = 1; i < rows.length; i++) {
-        const cols = rows[i].querySelectorAll("td");
-        let row = [];
-        cols.forEach(col => row.push(col.innerText));
-        csv += row.join(",") + "\n";
+    // CSV Download
+    document.getElementById("downloadBtn").addEventListener("click", () => {
+      if (allData.length === 0) {
+        alert("डेटा उपलब्ध नाही");
+        return;
       }
-      const blob = new Blob([csv], { type: "text/csv" });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `transactions-${new Date().toISOString().slice(0,10)}.csv`;
-      a.click();
-      window.URL.revokeObjectURL(url);
-    }
-    window.downloadCSV = downloadCSV;
+
+      let csvContent = "दिनांक,नाव,प्रकार,रक्कम(₹)\n";
+      allData.forEach((row) => {
+        csvContent += `${row.date},${row.name},${row.type==="credit"?"जमा":"खर्च"},${row.amount}\n`;
+      });
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "transactions.csv";
+      link.click();
+    });
   </script>
 </body>
 </html>
