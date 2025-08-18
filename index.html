@@ -6,36 +6,103 @@
   <title>१९९५ batchmates स्नेहसंमेलन २०२५</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Poppins', sans-serif; background: #f9f9f9; margin: 0; padding: 0; }
-    header { background: #2c3e50; color: white; text-align: center; padding: 20px; font-size: 22px; font-weight: 600; }
-    .container { width: 95%; max-width: 900px; margin: 20px auto; background: white; padding: 20px; border-radius: 8px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1); }
-    form { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-    input, select, button { padding: 10px; font-size: 14px; border-radius: 5px; border: 1px solid #ccc; }
-    input, select { flex: 1; min-width: 120px; }
-    button { background: #2980b9; color: white; cursor: pointer; border: none; }
-    button:hover { background: #1f6391; }
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-    th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-    th { background: #34495e; color: white; }
-    .badge { padding: 5px 12px; border-radius: 20px; font-weight: bold; color: white; }
-    .credit { background: #27ae60; }
-    .debit { background: #c0392b; }
-    .amount-credit { color: #27ae60; font-weight: 600; }
-    .amount-debit { color: #c0392b; font-weight: 600; }
-    .download-btn { margin: 15px 0; background: #16a085; }
-    .balance-box { margin-top: 20px; font-size: 18px; font-weight: 600; }
-    .balance-positive { color: #27ae60; }
-    .balance-negative { color: #c0392b; }
-    .img-banner { width: 100%; border-radius: 8px; margin-bottom: 20px; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #2c3e50;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      font-size: 22px;
+      font-weight: 600;
+    }
+    .container {
+      width: 95%;
+      max-width: 900px;
+      margin: 20px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    input, select, button {
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    input, select {
+      flex: 1;
+      min-width: 120px;
+    }
+    button {
+      background: #2980b9;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+    button:hover {
+      background: #1f6391;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background: #34495e;
+      color: white;
+    }
+    .badge {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-weight: bold;
+      color: white;
+    }
+    .credit {
+      background: #27ae60;
+    }
+    .debit {
+      background: #c0392b;
+    }
+    .amount-credit {
+      color: #27ae60;
+      font-weight: 600;
+    }
+    .amount-debit {
+      color: #c0392b;
+      font-weight: 600;
+    }
+    .download-btn {
+      margin: 15px 0;
+      background: #16a085;
+    }
+    .balance {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 10px 0;
+      color: #2c3e50;
+    }
   </style>
 </head>
 <body>
   <header>१९९५ batchmates स्नेहसंमेलन २०२५</header>
 
   <div class="container">
-    <img src="IMG_0143.jpeg" alt="Banner" class="img-banner"/>
-
     <h3>नवीन नोंद जोडा</h3>
     <form id="entryForm">
       <input type="date" id="date" required>
@@ -50,7 +117,7 @@
 
     <button class="download-btn" onclick="downloadCSV()">CSV डाउनलोड करा</button>
 
-    <div id="balanceBox" class="balance-box">शिल्लक रक्कम: 0</div>
+    <div class="balance">शिल्लक रक्कम: <span id="balance">0</span> ₹</div>
 
     <h3>नोंदी</h3>
     <table>
@@ -71,7 +138,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
 
-    // 🔥 Firebase Config
+    // ✅ Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyBhrHcBSK1G1EmFW12_eBfA14mHhZd1MdI",
       authDomain: "batch1995-11ec2.firebaseapp.com",
@@ -88,8 +155,9 @@
 
     const entryForm = document.getElementById("entryForm");
     const tableBody = document.getElementById("tableBody");
-    const balanceBox = document.getElementById("balanceBox");
+    const balanceEl = document.getElementById("balance");
 
+    // 🔹 नोंद जतन करा
     entryForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const date = document.getElementById("date").value;
@@ -107,7 +175,7 @@
       }
     });
 
-    // 🔄 Firestore Live Data (Reload नंतर कायम)
+    // 🔹 Reload नंतरही Firebase मधील सर्व डेटा दिसेल
     const q = query(collection(db, "transactions"), orderBy("date", "desc"));
     onSnapshot(q, (snapshot) => {
       tableBody.innerHTML = "";
@@ -121,8 +189,11 @@
         const amountClass = data.type === "credit" ? "amount-credit" : "amount-debit";
         const sign = data.type === "credit" ? "+" : "-";
 
-        // ✅ Balance Update
-        balance += data.type === "credit" ? data.amount : -data.amount;
+        if (data.type === "credit") {
+          balance += data.amount;
+        } else {
+          balance -= data.amount;
+        }
 
         const row = `<tr>
           <td>${data.date}</td>
@@ -133,10 +204,10 @@
         tableBody.innerHTML += row;
       });
 
-      balanceBox.innerHTML = `शिल्लक रक्कम: <span class="${balance >= 0 ? "balance-positive" : "balance-negative"}">${balance}</span>`;
+      balanceEl.textContent = balance;
     });
 
-    // CSV डाउनलोड
+    // 🔹 CSV डाउनलोड
     function downloadCSV() {
       let csv = "तारीख,नाव,प्रकार,रक्कम\n";
       const rows = document.querySelectorAll("table tr");
