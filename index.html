@@ -40,7 +40,7 @@
     <button type="submit">जतन करा</button>
   </form>
 
-  <button class="download-btn" id="downloadBtn">Download CSV</button>
+  <button class="download-btn" id="downloadBtn">CSV डाउनलोड करा</button>
 
   <table>
     <thead>
@@ -55,11 +55,11 @@
   </table>
 
   <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+  <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-database.js"></script>
 
-    // 🔥 Firebase config
+  <script>
+    // 🔥 Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyBhrHcBSK1G1EmFW12_eBfA14mHhZd1MdI",
       authDomain: "batch1995-11ec2.firebaseapp.com",
@@ -71,12 +71,17 @@
       measurementId: "G-4H1H2TPXYY"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    // फॉर्म submit → Firestore मध्ये save
     const form = document.getElementById("entryForm");
-    form.addEventListener("submit", async (e) => {
+    const tableBody = document.getElementById("tableBody");
+    const balanceEl = document.getElementById("balance");
+    let allData = [];
+
+    // ✅ डेटा सबमिट करा
+    form.addEventListener("submit", (e) => {
       e.preventDefault();
       const date = document.getElementById("date").value;
       const name = document.getElementById("name").value;
@@ -84,33 +89,60 @@
       const amount = parseFloat(document.getElementById("amount").value);
 
       if (!date || !name || !amount) return;
-      try {
-        await addDoc(collection(db, "transactions"), { date, name, type, amount });
-        form.reset();
-      } catch (err) {
-        console.error("Firestore add error:", err);
-      }
+
+      const newRef = db.ref("transactions").push();
+      newRef.set({
+        date, name, type, amount
+      });
+
+      form.reset();
     });
 
-    // Firestore live data listener
-    const tableBody = document.getElementById("tableBody");
-    const balanceEl = document.getElementById("balance");
-    let allData = [];
-
-    onSnapshot(query(collection(db, "transactions"), orderBy("date", "desc")), (snapshot) => {
+    // ✅ डेटा realtime वाचा
+    db.ref("transactions").on("value", (snapshot) => {
       tableBody.innerHTML = "";
       allData = [];
       let balance = 0;
 
-      snapshot.forEach((doc) => {
-        const d = doc.data();
+      snapshot.forEach((childSnapshot) => {
+        const d = childSnapshot.val();
         allData.push(d);
         balance += d.type === "credit" ? d.amount : -d.amount;
 
         const badge = `<span style="padding:4px 8px;color:#fff;background:${d.type==="credit"?"green":"red"};border-radius:4px;">${d.type==="credit"?"जमा":"खर्च"}</span>`;
-        tableBody.innerHTML += `<tr>
-          <td>${d.date}</td>
-          <td>${d.name}</td>
+        tableBody.innerHTML += `
+          <tr>
+            <td>${d.date}</td>
+            <td>${d.name}</td>
+            <td>${badge}</td>
+            <td>${d.amount}</td>
+          </tr>`;
+      });
+
+      balanceEl.textContent = balance;
+    });
+
+    // ✅ CSV डाउनलोड
+    document.getElementById("downloadBtn").addEventListener("click", () => {
+      if (allData.length === 0) {
+        alert("डेटा उपलब्ध नाही");
+        return;
+      }
+
+      let csvContent = "दिनांक,नाव,प्रकार,रक्कम(₹)\n";
+      allData.forEach((row) => {
+        csvContent += `${row.date},${row.name},${row.type==="credit"?"जमा":"खर्च"},${row.amount}\n`;
+      });
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "transactions.csv";
+      link.click();
+    });
+  </script>
+</body>
+</html>          <td>${d.name}</td>
           <td>${badge}</td>
           <td>${d.amount}</td>
         </tr>`;
