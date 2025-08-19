@@ -39,6 +39,9 @@
     .badge-danger {
       background-color: #dc3545;
     }
+    #adminSection {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -48,8 +51,27 @@
     <h3>95 BATCH स्नेहसंमेलन 2025</h3>
   </header>
 
-  <!-- Form Section -->
-  <div class="container my-4">
+  <!-- Login Section -->
+  <div class="container my-3">
+    <div class="card shadow p-3">
+      <h5 class="text-center">Admin Login</h5>
+      <form id="loginForm" class="row g-2">
+        <div class="col-md-5 col-12">
+          <input type="email" id="loginEmail" placeholder="ई-मेल" class="form-control" required>
+        </div>
+        <div class="col-md-5 col-12">
+          <input type="password" id="loginPassword" placeholder="पासवर्ड" class="form-control" required>
+        </div>
+        <div class="col-md-2 col-12 text-center">
+          <button type="submit" class="btn btn-primary w-100">Login</button>
+        </div>
+      </form>
+      <div id="loginMsg" class="text-danger text-center mt-2"></div>
+    </div>
+  </div>
+
+  <!-- Admin Section -->
+  <div class="container my-4" id="adminSection">
     <div class="card shadow p-3">
       <form id="entryForm" class="row g-2">
         <div class="col-md-3 col-12">
@@ -74,8 +96,10 @@
       <div class="text-center balance text-success" id="balance">शिल्लक रक्कम: ₹0</div>
       <button id="downloadCsv" class="btn btn-csv mt-2">CSV डाउनलोड करा</button>
     </div>
+  </div>
 
-    <!-- Table -->
+  <!-- Table -->
+  <div class="container">
     <div class="table-responsive">
       <table class="table table-bordered table-striped text-center align-middle">
         <thead class="table-dark">
@@ -93,11 +117,7 @@
 
   <!-- Firebase SDK -->
   <script type="module">
-    // Import Firebase
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
-
-    // Your Firebase config
+    // ✅ Firebase Config (UPPER PART)
     const firebaseConfig = {
       apiKey: "AIzaSyBhrHcBSK1G1EmFW12_eBfA14mHhZd1MdI",
       authDomain: "batch1995-11ec2.firebaseapp.com",
@@ -109,16 +129,44 @@
       measurementId: "G-4H1H2TPXYY"
     };
 
-    // Initialize Firebase
+    // Import Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+
+    // Init Firebase
     const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
     const db = getDatabase(app);
+
+    const loginForm = document.getElementById("loginForm");
+    const loginMsg = document.getElementById("loginMsg");
+    const adminSection = document.getElementById("adminSection");
 
     const form = document.getElementById("entryForm");
     const dataTable = document.getElementById("dataTable");
     const balanceEl = document.getElementById("balance");
     const downloadBtn = document.getElementById("downloadCsv");
 
-    // Save entry
+    // ✅ Admin Login
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          loginMsg.innerText = "";
+          adminSection.style.display = "block"; // show admin section
+          loginForm.style.display = "none"; // hide login
+        })
+        .catch((error) => {
+          loginMsg.innerText = "Login Failed! चुकीचे ई-मेल किंवा पासवर्ड.";
+          console.error(error);
+        });
+    });
+
+    // ✅ Save entry (Only Admin can add)
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       const date = document.getElementById("date").value;
@@ -130,7 +178,7 @@
       form.reset();
     });
 
-    // Fetch entries
+    // ✅ Fetch entries (Everyone can see)
     onValue(ref(db, "entries"), (snapshot) => {
       dataTable.innerHTML = "";
       let balance = 0;
@@ -151,7 +199,7 @@
       balanceEl.innerText = `शिल्लक रक्कम: ₹${balance}`;
     });
 
-    // CSV Download
+    // ✅ CSV Download
     downloadBtn.addEventListener("click", () => {
       let csv = "तारीख,नाव,रक्कम,प्रकार\n";
       document.querySelectorAll("#dataTable tr").forEach(row => {
